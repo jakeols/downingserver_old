@@ -15,35 +15,19 @@ I've been looking for an equivalent for Laravel but did not find any so this is 
 
 ## Laravel 5 is finally supported!
 
-Various versions of api-guard:
+**Laravel 5.2.*: `~3.*`
 
-**Laravel 5.2.x**: `~3.*` (did by @gholol. :+1:)
+**Laravel 5.1.*: `~2.*`
 
-NOTE: For this to work in Laravel 5.2, add the apiguard middleware to the `$routeMiddleware` array in `app/Http/Kernel.php` as shown below:
+**Laravel 4.2.*: [`~1.*`](https://github.com/chrisbjr/api-guard/tree/laravel4) (Recently updated version for Laravel 4. Please note that there are namespace changes here)
 
-```
-<?php
-    protected $routeMiddleware = [
-        ...
-        'apiguard' => \Chrisbjr\ApiGuard\Http\Middleware\ApiGuard::class,
-        ...
-    ];
-?>
-```
-
-Thanks @muya on https://blog.muya.co.ke/api-guard-laravel-5-2/
-
-**Laravel 5.1.x**: `~2.*`
-
-**Laravel 4.2.x**: [`~1.*`](https://github.com/chrisbjr/api-guard/tree/laravel4) (Recently updated version for Laravel 4. Please note that there are namespace changes here)
-
-**Laravel 4.2.x**: [`0.*`](https://github.com/chrisbjr/api-guard/tree/v0.7) (The version that most of you are using)
+**Laravel 4.2.*: [`0.*`](https://github.com/chrisbjr/api-guard/tree/v0.7) (The version that most of you are using)
 
 ## Quick start
 
-### Laravel 5.x
+### Laravel 5.2.x
 
-Run `composer require chrisbjr/api-guard`
+Run `composer require chrisbjr/api-guard 3.1.*`
 
 In your `config/app.php` add `Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider` to the end of the `providers` array
 
@@ -55,15 +39,29 @@ In your `config/app.php` add `Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvide
 ),
 ```
 
+Add the `ApiGuardAuth` facade to the end of the `aliases` array as well
+
+```php
+'aliases' => array(
+
+    ...
+    'ApiGuardAuth' => \Chrisbjr\ApiGuard\Facades\ApiGuardAuth::class,
+),
+```
+
 Now publish the migration and configuration files for api-guard:
 
     $ php artisan vendor:publish --provider="Chrisbjr\ApiGuard\Providers\ApiGuardServiceProvider"
-    
+
 Then run the migration:
 
     $ php artisan migrate
 
 It will setup two tables - api_keys and api_logs.
+
+### Laravel 5.0.x to 5.1.x
+
+Note: Documentation for use with Laravel 5.0.x and 5.1.x differs from Laravel 5.2.x. Please refer to the README [here](https://github.com/chrisbjr/api-guard/tree/v2.3.0).
 
 ### Laravel 4.2.x
 
@@ -83,12 +81,10 @@ To generate an API key that is linked to a user, you can do the following:
 
 `php artisan api-key:generate --user-id=1`
 
-To generate an API key from within your application, you can use the available Facade:
+To generate an API key from within your application, you can use the following method in the `ApiKey` model:
 
 ```
-$apiKey = new Chrisbjr\ApiGuard\Models\ApiKey;
-$apiKey->key = $apiKey->generateKey();
-$apiKey->save();
+$apiKey = Chrisbjr\ApiGuard\Models\ApiKey::make()
 ```
 
 ## Usage

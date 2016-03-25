@@ -38,12 +38,12 @@ class GenerateApiKeyCommand extends Command
      */
     public function fire()
     {
-        $userId = $this->getOption('user-id', 0);
+        $userId = $this->getOption('user-id', null);
 
         if ( ! empty($userId)) {
 
             // check whether this user already has an API key
-            $apiKeyModel = App::make(Config::get('apiguard.model', 'Chrisbjr\ApiGuard\Models\ApiKey'));
+            $apiKeyModel = App::make(Config::get('apiguard.models.apiKey', 'Chrisbjr\ApiGuard\Models\ApiKey'));
 
             $apiKey = $apiKeyModel->where('user_id', '=', $userId)->first();
 
@@ -55,22 +55,14 @@ class GenerateApiKeyCommand extends Command
             }
         }
 
-        $apiKey = App::make(Config::get('apiguard.model', 'Chrisbjr\ApiGuard\Models\ApiKey'));
-        $apiKey->key = $apiKey->generateKey();
-        $apiKey->user_id = $this->getOption('user-id', 0);
-        $apiKey->level = $this->getOption('level', 10);
-        $apiKey->ignore_limits = $this->getOption('ignore-limits', 1);
-
-        if ($apiKey->save() === false) {
-            $this->error("Failed to save API key to the database.");
-            return;
-        }
+        $apiKey = ApiKey::make($this->getOption('user-id', null), $this->getOption('level', 10), $this->getOption('ignore-limits', 1));
 
         if (empty($apiKey->user_id)) {
             $this->info("You have successfully generated an API key:");
         } else {
             $this->info("You have successfully generated an API key for user ID#{$apiKey->user_id}:");
         }
+
         $this->info($apiKey->key);
     }
 
